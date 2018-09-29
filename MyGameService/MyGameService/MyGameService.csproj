@@ -49,14 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\UserInfo.cs" />
-    <Compile Include="E:\Unity工程\Last\Assets\Scripts\Commons\CS-Param.cs">
-      <Link>Commons\CS-Param.cs</Link>
-    </Compile>
-    <Compile Include="Net\DoTaskClientReq.cs" />
-    <Compile Include="E:\Unity工程\Last\Assets\Scripts\Commons\Consts.cs">
+    <Compile Include="..\..\..\Last-Client\Last\Assets\Scripts\Commons\Consts.cs">
       <Link>Commons\Consts.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\Last-Client\Last\Assets\Scripts\Commons\CS-Param.cs">
+      <Link>Commons\CS-Param.cs</Link>
+    </Compile>
+    <Compile Include="Data\UserInfo.cs" />
+    <Compile Include="Net\DoTaskClientReq.cs" />
     <Compile Include="Net\DoTask_ChangeEquip.cs" />
     <Compile Include="Net\DoTask_Sign.cs" />
     <Compile Include="Net\DoTask_UserInfo.cs" />
