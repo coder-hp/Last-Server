@@ -14,7 +14,7 @@ namespace MyGameService.Net
         public static void Do(ClientInfo clientInfo, string data)
         {
             S2C_ChangeEquip s2c = new S2C_ChangeEquip();
-            s2c.Tag = (int)Consts.NetTag.ChangeEquip;
+            s2c.Tag = (int)CSParam.NetTag.ChangeEquip;
             try
             {
                 C2S_ChangeEquip c2s = JsonConvert.DeserializeObject<C2S_ChangeEquip>(data);

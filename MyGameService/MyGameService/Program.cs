@@ -48,7 +48,13 @@ namespace MyGameService
                 }
             }
 
-            Console.ReadKey();            
+            Console.ReadKey();
+            Console.ReadKey();
+            Console.ReadKey();
+            Console.ReadKey();
+            Console.ReadKey();
+            Console.ReadKey();
+            Console.ReadKey();
         }
 
         private static bool HandlerRoutine(int CtrlType)

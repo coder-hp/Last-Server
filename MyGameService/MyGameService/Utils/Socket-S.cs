@@ -91,7 +91,7 @@ namespace SocketUtil
                 m_socket.Bind(iPEndPoint);
                 m_socket.Listen(400);
 
-                Console.WriteLine("开始监听...");
+                Console.WriteLine("服务器启动成功...");
                 ClientInfoManager.startCheckHeartBeat();
 
 

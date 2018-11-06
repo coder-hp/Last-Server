@@ -14,7 +14,7 @@ namespace MyGameService.Net
         public static void Do(ClientInfo clientInfo, string data)
         {
             S2C_Sign s2c = new S2C_Sign();
-            s2c.Tag = (int)Consts.NetTag.Sign;
+            s2c.Tag = (int)CSParam.NetTag.Sign;
             try
             {
                 C2S_Sign c2s = JsonConvert.DeserializeObject<C2S_Sign>(data);

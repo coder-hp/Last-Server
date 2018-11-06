@@ -14,7 +14,7 @@ namespace MyGameService.Net
         public static void Do(ClientInfo clientInfo, string data)
         {
             S2C_Login s2c = new S2C_Login();
-            s2c.Tag = (int)Consts.NetTag.Login;
+            s2c.Tag = (int)CSParam.NetTag.Login;
             try
             {
                 C2S_Login c2s = JsonConvert.DeserializeObject<C2S_Login>(data);

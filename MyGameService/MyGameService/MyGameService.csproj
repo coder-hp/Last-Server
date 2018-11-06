@@ -49,9 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Last-Client\Last\Assets\Scripts\Commons\Consts.cs">
-      <Link>Commons\Consts.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Last-Client\Last\Assets\Scripts\Commons\CS-Param.cs">
       <Link>Commons\CS-Param.cs</Link>
     </Compile>

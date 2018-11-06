@@ -18,25 +18,25 @@ namespace SocketUtil
                 
                 switch (csBaseData.Tag)
                 {
-                    case (int)Consts.NetTag.Login:
+                    case (int)CSParam.NetTag.Login:
                         {
                             DoTask_Login.Do(clientInfo, data);
                         }
                         break;
 
-                    case (int)Consts.NetTag.UserInfo:
+                    case (int)CSParam.NetTag.UserInfo:
                         {
                             DoTask_UserInfo.Do(clientInfo, data);
                         }
                         break;
 
-                    case (int)Consts.NetTag.ChangeEquip:
+                    case (int)CSParam.NetTag.ChangeEquip:
                         {
                             DoTask_ChangeEquip.Do(clientInfo, data);
                         }
                         break;
 
-                    case (int)Consts.NetTag.Sign:
+                    case (int)CSParam.NetTag.Sign:
                         {
                             DoTask_Sign.Do(clientInfo, data);
                         }
