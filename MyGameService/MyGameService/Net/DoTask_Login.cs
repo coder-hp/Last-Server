@@ -35,11 +35,18 @@ namespace MyGameService.Net
                             string _userId = list[0].keyList[0].m_value.ToString();
                             string _account = list[0].keyList[1].m_value.ToString();
                             string _password = list[0].keyList[2].m_value.ToString();
+                            string _phone = list[0].keyList[3].m_value.ToString();
+                            int _zhanshiLevel = (int)list[0].keyList[4].m_value;
+                            int _fashiLevel = (int)list[0].keyList[5].m_value;
+                            int _huanshiLevel = (int)list[0].keyList[6].m_value;
 
                             if (_password == password)
                             {
                                 s2c.Code = (int)CSParam.CodeType.Ok;
                                 s2c.UserId = _userId;
+                                s2c.zhanshiLevel = _zhanshiLevel;
+                                s2c.fashiLevel = _fashiLevel;
+                                s2c.huanshiLevel = _huanshiLevel;
                                 Socket_S.getInstance().Send(clientInfo, s2c);
                             }
                             else

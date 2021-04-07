@@ -40,6 +40,9 @@ public class C2S_Login : C2SBaseData
 public class S2C_Login : S2CBaseData
 {
     public string UserId = "";
+    public int zhanshiLevel = 0;
+    public int fashiLevel = 0;
+    public int huanshiLevel = 0;
 }
 
 public class C2S_Register : C2SBaseData
@@ -51,4 +54,7 @@ public class C2S_Register : C2SBaseData
 public class S2C_Register : S2CBaseData
 {
     public string UserId = "";
+    public int zhanshiLevel = 0;
+    public int fashiLevel = 0;
+    public int huanshiLevel = 0;
 }

@@ -1,0 +1,8 @@
+{
+  "server_port": 9999,
+  "sql_ip": "rm-rj96ydm0ppl3dx8ftto.mysql.rds.aliyuncs.com",
+  "sql_port": 3306,
+  "user": "beatfire",
+  "password": "Hp582254172",
+  "databaseName": "darkword"
+}
