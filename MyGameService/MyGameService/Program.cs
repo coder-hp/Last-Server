@@ -75,7 +75,7 @@ namespace MyGameService
 
         static void OnReceive(ClientInfo clientInfo, string data)
         {
-            Console.WriteLine("收到" + clientInfo .m_id + "消息：" + data + "    size=" + data.Length);
+            Console.WriteLine("收到" + clientInfo .m_id + "消息：" + data);
 
             DoTaskClientReq.Do(clientInfo, data);
         }

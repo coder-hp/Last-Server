@@ -91,7 +91,9 @@ namespace SocketUtil
                 m_socket.Bind(iPEndPoint);
                 m_socket.Listen(400);
 
-                Console.WriteLine("服务器启动成功...");
+                Console.WriteLine("ipPort:" + m_ipPort);
+                Console.WriteLine("服务器启动成功...\n");
+
                 ClientInfoManager.startCheckHeartBeat();
 
 
@@ -116,7 +118,7 @@ namespace SocketUtil
             {
                 ClientInfo client = (ClientInfo)clientInfo;
 
-                Console.WriteLine("有客户端连接：id=" + client.m_id + "   ip=" + client.m_ip);
+                Console.WriteLine("有客户端连接：id=" + client.m_id + "   ip=" + client.m_ip + "\n");
 
                 // 接收消息
                 OnReceive(clientInfo);
@@ -189,7 +191,7 @@ namespace SocketUtil
                     // 与客户端断开连接
                     else
                     {
-                        Console.WriteLine("与客户端断开连接,id=" + client.m_id);
+                        Console.WriteLine("与客户端断开连接,id=" + client.m_id + "\n");
                         DisconnectWithClient(client);
 
                         return;
@@ -213,7 +215,7 @@ namespace SocketUtil
                     return;
                 }
 
-                Console.WriteLine("返回消息给客户端" + clientInfo.m_id + "：" + data);
+                Console.WriteLine("返回消息给客户端" + clientInfo.m_id + "：" + data + "\n");
 
                 // 增加数据包尾部标识
                 data += m_packEndFlag;
@@ -231,7 +233,7 @@ namespace SocketUtil
 
         public void DisconnectWithClient(ClientInfo client)
         {
-            Console.WriteLine("客户端断开：" + client.m_id);
+            Console.WriteLine("客户端断开：" + client.m_id + "\n");
             ClientInfoManager.deleteClientInfo(client);
 
             if (m_onSocketEvent_Disconnect != null)

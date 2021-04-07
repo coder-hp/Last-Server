@@ -49,9 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Last-Client\Last\Assets\Scripts\Commons\CS-Param.cs">
-      <Link>Commons\CS-Param.cs</Link>
-    </Compile>
+    <Compile Include="Commons\CS-Param.cs" />
     <Compile Include="Data\UserInfo.cs" />
     <Compile Include="Net\DoTaskClientReq.cs" />
     <Compile Include="Net\DoTask_ChangeEquip.cs" />
