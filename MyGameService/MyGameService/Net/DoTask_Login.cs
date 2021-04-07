@@ -15,24 +15,56 @@ namespace MyGameService.Net
         {
             S2C_Login s2c = new S2C_Login();
             s2c.Tag = (int)CSParam.NetTag.Login;
+            s2c.Code = (int)CSParam.CodeType.Ok;
             try
             {
                 C2S_Login c2s = JsonConvert.DeserializeObject<C2S_Login>(data);
+                string account = c2s.Account;
+                string password = c2s.Password;
 
-                if (!UserInfo.isExitsUser(c2s.DeviceId))
+                List<TableKeyObj> keylist = new List<TableKeyObj>() { new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string, account) };
+
+                MySqlUtil.getInstance().addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData) =>
                 {
-                    Console.WriteLine("新增用户：" + c2s.DeviceId);
-                    UserInfo.addUser(c2s.DeviceId);
-                }
+                    if (cmdReturnData.code == 1)
+                    {
+                        
+                        List<DBTablePreset> list = cmdReturnData.listData;
+                        if (list != null && list.Count > 0)
+                        {
+                            string _userId = list[0].keyList[0].m_value.ToString();
+                            string _account = list[0].keyList[1].m_value.ToString();
+                            string _password = list[0].keyList[2].m_value.ToString();
 
-                s2c.Message = "登录成功";
-
-                s2c.Id = c2s.DeviceId;
-                Socket_S.getInstance().Send(clientInfo, s2c);
+                            if (_password == password)
+                            {
+                                s2c.Code = (int)CSParam.CodeType.Ok;
+                                s2c.UserId = _userId;
+                                Socket_S.getInstance().Send(clientInfo, s2c);
+                            }
+                            else
+                            {
+                                s2c.Code = (int)CSParam.CodeType.LoginFail;
+                                Socket_S.getInstance().Send(clientInfo, s2c);
+                            }
+                        }
+                        else
+                        {
+                            s2c.Code = (int)CSParam.CodeType.LoginFail;
+                            Socket_S.getInstance().Send(clientInfo, s2c);
+                        }
+                    }
+                    else if (cmdReturnData.code == -1)
+                    {
+                        s2c.Code = (int)CSParam.CodeType.ServerError;
+                        Socket_S.getInstance().Send(clientInfo, s2c);
+                        return;
+                    }
+                });
             }
             catch (Exception ex)
             {
-                s2c.Message = "请求数据错误";
+                s2c.Code = (int)CSParam.CodeType.ParamError;
                 Socket_S.getInstance().Send(clientInfo, s2c);
             }
         }

@@ -5,66 +5,50 @@ public class CSParam
 {
     public enum NetTag
     {
+        Register,
         Login,
-        UserInfo,
-        Bag,
-        ChangeEquip,
-        Sign,
+    }
+
+    public enum CodeType
+    {
+        Ok,
+        LoginFail,
+        RegisterFail_Exist,
+        ParamError,
+        ServerError,
     }
 }
 
-public class UserInfoData
+public class C2SBaseData
 {
-    public string Id;
-    public int Gold;
-    public List<int> BagList = new List<int>();
-    public List<int> EquipList = new List<int>();
+    public int Tag;
+    public string UserId = "";
 }
 
-public class CSBaseData
+public class S2CBaseData
 {
     public int Tag;
     public int Code;
-    public string Message;
 }
 
-public class C2S_Login : CSBaseData
+public class C2S_Login : C2SBaseData
 {
-    public string DeviceId;
+    public string Account;
+    public string Password;
 }
 
-public class S2C_Login : CSBaseData
+public class S2C_Login : S2CBaseData
 {
-    public string Id;
+    public string UserId = "";
 }
 
-public class C2S_UserInfo : CSBaseData
+public class C2S_Register : C2SBaseData
 {
-    public string DeviceId;
+    public string Account = "";
+    public string Password = "";
 }
 
-public class S2C_UserInfo : CSBaseData
+public class S2C_Register : S2CBaseData
 {
-    public UserInfoData UserInfoData;
-}
-
-public class C2S_ChangeEquip : CSBaseData
-{
-    public string DeviceId;
-    public List<int> BagList = new List<int>();
-    public List<int> EquipList = new List<int>();
-}
-
-public class S2C_ChangeEquip : CSBaseData
-{
-}
-
-public class C2S_Sign : CSBaseData
-{
-    public string Id;
-}
-
-public class S2C_Sign : CSBaseData
-{
-    public string Reward;
+    public string UserId = "";
 }

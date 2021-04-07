@@ -35,6 +35,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data">
+      <HintPath>Libs\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\Newtonsoft.Json.dll</HintPath>
@@ -50,20 +53,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commons\CS-Param.cs" />
-    <Compile Include="Data\UserInfo.cs" />
+    <Compile Include="Data\ConfigEntity.cs" />
     <Compile Include="Net\DoTaskClientReq.cs" />
-    <Compile Include="Net\DoTask_ChangeEquip.cs" />
-    <Compile Include="Net\DoTask_Sign.cs" />
-    <Compile Include="Net\DoTask_UserInfo.cs" />
+    <Compile Include="Net\DoTask_Register.cs" />
     <Compile Include="Net\DoTask_Login.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Table\DBTableManager.cs" />
+    <Compile Include="Table\Default_Preset.cs" />
+    <Compile Include="Table\User_Preset.cs" />
     <Compile Include="Utils\ClientInfoManager.cs" />
     <Compile Include="Utils\CommonUtil.cs" />
     <Compile Include="Utils\FileIO.cs" />
     <Compile Include="Utils\LogUtil.cs" />
+    <Compile Include="Utils\MySqlUtil.cs" />
     <Compile Include="Utils\RandomUtil.cs" />
     <Compile Include="Utils\Socket-S.cs" />
+    <Compile Include="Utils\TimerUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

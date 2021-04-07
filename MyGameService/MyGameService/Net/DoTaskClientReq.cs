@@ -14,9 +14,9 @@ namespace SocketUtil
         {
             try
             {
-                CSBaseData csBaseData = JsonConvert.DeserializeObject<CSBaseData>(data);
+                C2SBaseData c2sBaseData = JsonConvert.DeserializeObject<C2SBaseData>(data);
                 
-                switch (csBaseData.Tag)
+                switch (c2sBaseData.Tag)
                 {
                     case (int)CSParam.NetTag.Login:
                         {
@@ -24,24 +24,12 @@ namespace SocketUtil
                         }
                         break;
 
-                    case (int)CSParam.NetTag.UserInfo:
+                    case (int)CSParam.NetTag.Register:
                         {
-                            DoTask_UserInfo.Do(clientInfo, data);
+                            DoTask_Register.Do(clientInfo, data);
                         }
                         break;
 
-                    case (int)CSParam.NetTag.ChangeEquip:
-                        {
-                            DoTask_ChangeEquip.Do(clientInfo, data);
-                        }
-                        break;
-
-                    case (int)CSParam.NetTag.Sign:
-                        {
-                            DoTask_Sign.Do(clientInfo, data);
-                        }
-                        break;
-                        
                     default:
                         {
                             Console.WriteLine("未知tag，不予处理：" + data);

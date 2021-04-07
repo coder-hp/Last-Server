@@ -22,7 +22,17 @@ namespace MyGameService
 
         static void Main(string[] args)
         {
-            Socket_S.getInstance().Start("0.0.0.0", 8888);
+            // 读取文件
+            {
+                StreamReader sr = new StreamReader("data/config.json", System.Text.Encoding.GetEncoding("utf-8"));
+                string config = sr.ReadToEnd().ToString();
+                sr.Close();
+
+                ConfigEntity.getInstance().data = JsonConvert.DeserializeObject<ConfigData>(config);
+            }
+
+            var configData = ConfigEntity.getInstance().data;
+            Socket_S.getInstance().Start("0.0.0.0", configData.server_port);
             Socket_S.getInstance().m_onSocketEvent_Receive = OnReceive;
 
             {
@@ -39,14 +49,7 @@ namespace MyGameService
                 }
             }
 
-            // 加载用户数据
-            {
-                string data = FileIO.Read(AppDomain.CurrentDomain.BaseDirectory + "UserInfo.txt");
-                if (!string.IsNullOrEmpty(data))
-                {
-                    UserInfo.UserInfoList = JsonConvert.DeserializeObject<List<UserInfoData>>(data);
-                }
-            }
+            MySqlUtil.getInstance().openDatabase();
 
             Console.ReadKey();
             Console.ReadKey();
@@ -64,8 +67,6 @@ namespace MyGameService
                 case CTRL_CLOSE_EVENT:       //用户要关闭Console了  
                     {
                         Console.WriteLine("控制台关闭");
-
-                        SaveData();
                     }
                     break;
             }
@@ -78,28 +79,6 @@ namespace MyGameService
             Console.WriteLine("收到" + clientInfo .m_id + "消息：" + data);
 
             DoTaskClientReq.Do(clientInfo, data);
-        }
-
-        // 保存用户数据
-        static void SaveData()
-        {
-            try
-            {
-                string path = AppDomain.CurrentDomain.BaseDirectory + "UserInfo.txt";
-                string data = JsonConvert.SerializeObject(UserInfo.UserInfoList);
-
-                if (File.Exists(path))
-                {
-                    // 重命名
-                    FileIO.Rename(path, AppDomain.CurrentDomain.BaseDirectory + "UserInfo-" + CommonUtil.getCurTimeNoFormat() + ".txt");
-                }
-
-                FileIO.Write(path, data);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
         }
     }
 }
