@@ -16,18 +16,34 @@ public enum CmdType
     delete,
 }
 
-public delegate void OnCmdCallBack(CmdReturnData cmdReturnData);
+public enum CmdResult
+{
+    OK,
+    Fail,
+}
+
+public class KeyData
+{
+    public string key;
+    public Object value;
+
+    public KeyData(string _key, Object _value)
+    {
+        key = _key;
+        value = _value;
+    }
+}
 
 public class CmdQueue
 {
     public bool isComplete = false;
     public CmdType cmdType;
     public string table;
-    public List<TableKeyObj> tiaojian_keyObjList;
-    public List<TableKeyObj> change_keyObjList;
-    public OnCmdCallBack onCmdCallBack;
+    public List<KeyData> tiaojian_keyObjList;
+    public List<KeyData> change_keyObjList;
+    public Action<CmdReturnData> onCmdCallBack;
 
-    public CmdQueue(CmdType _cmdType, string _table, List<TableKeyObj> _tiaojian_keyObjList, List<TableKeyObj> _change_keyObjList, OnCmdCallBack _onCmdCallBack)
+    public CmdQueue(CmdType _cmdType, string _table, List<KeyData> _tiaojian_keyObjList, List<KeyData> _change_keyObjList, Action<CmdReturnData> _onCmdCallBack)
     {
         cmdType = _cmdType;
         table = _table;
@@ -39,12 +55,12 @@ public class CmdQueue
 
 public class CmdReturnData
 {
-    public int code;
-    public List<DBTablePreset> listData;
+    public CmdResult result;
+    public Object[] listData;
 
-    public CmdReturnData(int _code, List<DBTablePreset> _listData = null)
+    public CmdReturnData(CmdResult _result, Object[] _listData = null)
     {
-        code = _code;
+        result = _result;
         listData = _listData;
     }
 }
@@ -75,8 +91,6 @@ class MySqlUtil
     {
         try
         {
-            DBTableManager.getInstance().init();
-
             var configData = ConfigEntity.getInstance().data;
             string conn = string.Format("Data Source= {0}; Port= {1} ; User ID = {2} ; Password = {3} ; DataBase = {4} ; Charset = utf8;", configData.sql_ip, configData.sql_port, configData.user, configData.password, configData.databaseName);
             m_mySqlConnection = new MySqlConnection(conn);
@@ -85,8 +99,6 @@ class MySqlUtil
             m_mySqlConnection.Open();
 
             CommonUtil.Log("数据库打开成功");
-
-            DBTableManager.getInstance().init();
 
             startCmdThread();
 
@@ -99,7 +111,7 @@ class MySqlUtil
         }
     }
 
-    public void addCommand(CmdType cmdType, string table, List<TableKeyObj> tiaojian_keyObjList, List<TableKeyObj> change_keyObjList, OnCmdCallBack onCmdCallBack)
+    public void addCommand(CmdType cmdType, string table, List<KeyData> tiaojian_keyObjList, List<KeyData> change_keyObjList, Action<CmdReturnData> onCmdCallBack)
     {
         cmdQueue_list.Add(new CmdQueue(cmdType, table, tiaojian_keyObjList, change_keyObjList, onCmdCallBack));
 
@@ -118,7 +130,7 @@ class MySqlUtil
 
     void startDingShiReq(object source, System.Timers.ElapsedEventArgs e)
     {
-        List<TableKeyObj> keylist = new List<TableKeyObj>() { new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string, "hp") };
+        List<KeyData> keylist = new List<KeyData>() { new KeyData("account", "hp") };
         addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData) =>
         {
             CommonUtil.Log("定时请求数据库，防止断开");
@@ -172,11 +184,11 @@ class MySqlUtil
                 {
                     case CmdType.query:
                         {
-                            List<DBTablePreset> listData = getTableData(cmdQueue.table, cmdQueue.tiaojian_keyObjList);
+                            Object[] data = getTableData(cmdQueue.table, cmdQueue.tiaojian_keyObjList);
                             if (cmdQueue.onCmdCallBack != null)
                             {
                                 doCmdComplete(cmdQueue);
-                                cmdQueue.onCmdCallBack(new CmdReturnData(listData == null ? -1 : 1, listData));
+                                cmdQueue.onCmdCallBack(new CmdReturnData(CmdResult.OK, data));
                             }
 
                             break;
@@ -185,10 +197,11 @@ class MySqlUtil
                     case CmdType.insert:
                         {
                             int code = insertData(cmdQueue.table, cmdQueue.change_keyObjList);
+                            CmdResult result = code == 1 ? CmdResult.OK : CmdResult.Fail;
                             if (cmdQueue.onCmdCallBack != null)
                             {
                                 doCmdComplete(cmdQueue);
-                                cmdQueue.onCmdCallBack(new CmdReturnData(code));
+                                cmdQueue.onCmdCallBack(new CmdReturnData(result));
                             }
 
                             break;
@@ -197,10 +210,11 @@ class MySqlUtil
                     case CmdType.update:
                         {
                             int code = updateData(cmdQueue.table, cmdQueue.tiaojian_keyObjList, cmdQueue.change_keyObjList);
+                            CmdResult result = code == 1 ? CmdResult.OK : CmdResult.Fail;
                             if (cmdQueue.onCmdCallBack != null)
                             {
                                 doCmdComplete(cmdQueue);
-                                cmdQueue.onCmdCallBack(new CmdReturnData(code));
+                                cmdQueue.onCmdCallBack(new CmdReturnData(result));
                             }
 
                             break;
@@ -209,10 +223,11 @@ class MySqlUtil
                     case CmdType.delete:
                         {
                             int code = deleteData(cmdQueue.table, cmdQueue.tiaojian_keyObjList);
+                            CmdResult result = code == 1 ? CmdResult.OK : CmdResult.Fail;
                             if (cmdQueue.onCmdCallBack != null)
                             {
                                 doCmdComplete(cmdQueue);
-                                cmdQueue.onCmdCallBack(new CmdReturnData(code));
+                                cmdQueue.onCmdCallBack(new CmdReturnData(result));
                             }
 
                             break;
@@ -274,70 +289,75 @@ class MySqlUtil
     }
 
     // 数据库查询-遍历整个表
-    List<DBTablePreset> queryDatabaseTable(string table)
+    Object[] queryDatabaseTable(string table)
     {
-        try
-        {
-            if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
-            {
-                CommonUtil.Log("数据库连接断开，开始重新连接");
-                openDatabase();
-            }
+        //try
+        //{
+        //    if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
+        //    {
+        //        CommonUtil.Log("数据库连接断开，开始重新连接");
+        //        openDatabase();
+        //    }
 
-            MySqlCommand cmd = new MySqlCommand("select * from " + table, m_mySqlConnection);
-            MySqlDataReader dr = cmd.ExecuteReader();   //读出数据
+        //    MySqlCommand cmd = new MySqlCommand("select * from " + table, m_mySqlConnection);
+        //    MySqlDataReader dr = cmd.ExecuteReader();   //读出数据
 
-            // 读出来是否有数据
-            //CommonUtil.Log("----"+dr.HasRows);
+        //    // 读出来是否有数据
+        //    //CommonUtil.Log("----"+dr.HasRows);
 
-            List<DBTablePreset> listData = new List<DBTablePreset>();
-            DBTablePreset baseTablePreset = DBTableManager.getInstance().getDBTablePreset(table);
+        //    List<DBTablePreset> listData = new List<DBTablePreset>();
+        //    DBTablePreset baseTablePreset = DBTableManager.getInstance().getDBTablePreset(table);
 
-            while (dr.Read())
-            {
-                DBTablePreset tempTablePreset = new Default_Preset(baseTablePreset.tableName);
+        //    while (dr.Read())
+        //    {
+        //        DBTablePreset tempTablePreset = new Default_Preset(baseTablePreset.tableName);
 
-                for (int i = 0; i < baseTablePreset.keyList.Count; i++)
-                {
-                    TableKeyObj tempTableKeyObj = new TableKeyObj(baseTablePreset.keyList[i].m_name, baseTablePreset.keyList[i].m_valueType);
-                    tempTableKeyObj.m_value = getObjectByValueType(dr, i, tempTableKeyObj.m_valueType);
-                    tempTablePreset.keyList.Add(tempTableKeyObj);
-                }
+        //        for (int i = 0; i < baseTablePreset.keyList.Count; i++)
+        //        {
+        //            KeyData tempKeyData = new KeyData(baseTablePreset.keyList[i].m_name, baseTablePreset.keyList[i].m_valueType);
+        //            tempKeyData.m_value = getObjectByValueType(dr, i, tempKeyData.m_valueType);
+        //            tempTablePreset.keyList.Add(tempKeyData);
+        //        }
 
-                listData.Add(tempTablePreset);
-            }
+        //        listData.Add(tempTablePreset);
+        //    }
 
-            dr.Close();
+        //    dr.Close();
 
-            return listData;
-        }
-        catch (Exception ex)
-        {
-            CommonUtil.Log(ex);
+        //    return listData;
+        //}
+        //catch (Exception ex)
+        //{
+        //    CommonUtil.Log(ex);
 
-            return null;
-        }
+        //    return null;
+        //}
+        return null;
     }
 
     // 数据库查询-按条件查询
-    List<DBTablePreset> getTableData(string table, List<TableKeyObj> keyObjList)
+    Object[] getTableData(string table, List<KeyData> keyObjList)
     {
         try
         {
-            List<DBTablePreset> dbTablePresetList = new List<DBTablePreset>();
-
             string command = "select * from " + table + " where ";
             for (int i = 0; i < keyObjList.Count; i++)
             {
-                if (keyObjList[i].m_valueType == TableKeyObj.ValueType.ValueType_string)
+                switch(keyObjList[i].value.GetType().Name)
                 {
-                    command += (keyObjList[i].m_name + " = '");
-                    command += keyObjList[i].m_value;
-                    command += "'";
-                }
-                else
-                {
-                    command += (keyObjList[i].m_name + " = " + keyObjList[i].m_value);
+                    case "String":
+                        {
+                            command += (keyObjList[i].key + " = '");
+                            command += keyObjList[i].value;
+                            command += "'";
+                            break;
+                        }
+
+                    default:
+                        {
+                            command += (keyObjList[i].key + " = " + keyObjList[i].value);
+                            break;
+                        }
                 }
 
                 if (i != (keyObjList.Count - 1))
@@ -354,26 +374,16 @@ class MySqlUtil
                 return null;
             }
 
-            List<DBTablePreset> listData = new List<DBTablePreset>();
-            DBTablePreset baseTablePreset = DBTableManager.getInstance().getDBTablePreset(table);
-
+            Object[] values = null;
             while (dr.Read())
             {
-                DBTablePreset tempTablePreset = new Default_Preset(baseTablePreset.tableName);
-
-                for (int i = 0; i < baseTablePreset.keyList.Count; i++)
-                {
-                    TableKeyObj tempTableKeyObj = new TableKeyObj(baseTablePreset.keyList[i].m_name, baseTablePreset.keyList[i].m_valueType);
-                    tempTableKeyObj.m_value = getObjectByValueType(dr, i, tempTableKeyObj.m_valueType);
-                    tempTablePreset.keyList.Add(tempTableKeyObj);
-                }
-
-                listData.Add(tempTablePreset);
+                values = new Object[dr.FieldCount];
+                int fieldCount = dr.GetValues(values);
             }
 
             dr.Close();
 
-            return listData;
+            return values;
         }
         catch (Exception ex)
         {
@@ -384,14 +394,14 @@ class MySqlUtil
     }
 
     // 增加数据
-    int insertData(string table, List<TableKeyObj> keyObjList)
+    int insertData(string table, List<KeyData> keyObjList)
     {
         try
         {
             string command = "insert into " + table + " (";
             for (int i = 0; i < keyObjList.Count; i++)
             {
-                command += (keyObjList[i].m_name);
+                command += (keyObjList[i].key);
 
                 if (i != (keyObjList.Count - 1))
                 {
@@ -405,15 +415,21 @@ class MySqlUtil
 
             for (int i = 0; i < keyObjList.Count; i++)
             {
-                if (keyObjList[i].m_valueType == TableKeyObj.ValueType.ValueType_string)
+                switch (keyObjList[i].value.GetType().Name)
                 {
-                    command += "'";
-                    command += keyObjList[i].m_value;
-                    command += "'";
-                }
-                else
-                {
-                    command += (keyObjList[i].m_value);
+                    case "String":
+                        {
+                            command += "'";
+                            command += keyObjList[i].value;
+                            command += "'";
+                            break;
+                        }
+
+                    default:
+                        {
+                            command += (keyObjList[i].value);
+                            break;
+                        }
                 }
 
                 if (i != (keyObjList.Count - 1))
@@ -447,22 +463,28 @@ class MySqlUtil
     }
 
     // 删除数据
-    int deleteData(string table, List<TableKeyObj> keyObjList)
+    int deleteData(string table, List<KeyData> keyObjList)
     {
         try
         {
             string command = "delete from " + table + " where ";
             for (int i = 0; i < keyObjList.Count; i++)
             {
-                if (keyObjList[i].m_valueType == TableKeyObj.ValueType.ValueType_string)
+                switch (keyObjList[i].value.GetType().Name)
                 {
-                    command += (keyObjList[i].m_name + " = '");
-                    command += keyObjList[i].m_value;
-                    command += "'";
-                }
-                else
-                {
-                    command += (keyObjList[i].m_name + " = " + keyObjList[i].m_value);
+                    case "String":
+                        {
+                            command += (keyObjList[i].key + " = '");
+                            command += keyObjList[i].value;
+                            command += "'";
+                            break;
+                        }
+
+                    default:
+                        {
+                            command += (keyObjList[i].key + " = " + keyObjList[i].value);
+                            break;
+                        }
                 }
 
                 if (i != (keyObjList.Count - 1))
@@ -491,24 +513,30 @@ class MySqlUtil
     }
 
     // 修改数据
-    int updateData(string table, List<TableKeyObj> tiaojian_keyObjList, List<TableKeyObj> change_keyObjList)
+    int updateData(string table, List<KeyData> tiaojian_keyObjList, List<KeyData> change_keyObjList)
     {
         try
         {
             string command = "update " + table + " set ";//name = 'zsr' ,sex = 0 where id = 2";
             for (int i = 0; i < change_keyObjList.Count; i++)
             {
-                command += (change_keyObjList[i].m_name + " = ");
+                command += (change_keyObjList[i].key + " = ");
 
-                if (change_keyObjList[i].m_valueType == TableKeyObj.ValueType.ValueType_string)
+                switch (change_keyObjList[i].value.GetType().Name)
                 {
-                    command += "'";
-                    command += change_keyObjList[i].m_value;
-                    command += "'";
-                }
-                else
-                {
-                    command += change_keyObjList[i].m_value;
+                    case "String":
+                        {
+                            command += "'";
+                            command += change_keyObjList[i].value;
+                            command += "'";
+                            break;
+                        }
+
+                    default:
+                        {
+                            command += change_keyObjList[i].value;
+                            break;
+                        }
                 }
 
                 if (i != (change_keyObjList.Count - 1))
@@ -521,15 +549,21 @@ class MySqlUtil
 
             for (int i = 0; i < tiaojian_keyObjList.Count; i++)
             {
-                if (tiaojian_keyObjList[i].m_valueType == TableKeyObj.ValueType.ValueType_string)
+                switch (tiaojian_keyObjList[i].value.GetType().Name)
                 {
-                    command += (tiaojian_keyObjList[i].m_name + " = '");
-                    command += tiaojian_keyObjList[i].m_value;
-                    command += "'";
-                }
-                else
-                {
-                    command += (tiaojian_keyObjList[i].m_name + " = " + tiaojian_keyObjList[i].m_value);
+                    case "String":
+                        {
+                            command += (tiaojian_keyObjList[i].key + " = '");
+                            command += tiaojian_keyObjList[i].value;
+                            command += "'";
+                            break;
+                        }
+
+                    default:
+                        {
+                            command += (tiaojian_keyObjList[i].key + " = " + tiaojian_keyObjList[i].value);
+                            break;
+                        }
                 }
 
                 if (i != (tiaojian_keyObjList.Count - 1))
@@ -617,34 +651,5 @@ class MySqlUtil
     {
         ++cmdQueueListMaxCount;
         //CommonUtil.Log("addCmdQueueListMaxCount:" + cmdQueueListMaxCount);
-    }
-
-    //-----------------------------------------------------
-    public object getObjectByValueType(MySqlDataReader dr, int index, TableKeyObj.ValueType valueType)
-    {
-        object obj = null;
-
-        switch (valueType)
-        {
-            case TableKeyObj.ValueType.ValueType_int:
-                {
-                    obj = dr.GetInt32(index);
-                }
-                break;
-
-            case TableKeyObj.ValueType.ValueType_float:
-                {
-                    obj = dr.GetFloat(index);
-                }
-                break;
-
-            case TableKeyObj.ValueType.ValueType_string:
-                {
-                    obj = dr.GetString(index);
-                }
-                break;
-        }
-
-        return obj;
     }
 }

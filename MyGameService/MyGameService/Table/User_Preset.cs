@@ -4,22 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class User_Preset : DBTablePreset
+public class Table_User
 {
-    public User_Preset(string name)
-    {
-        tableName = name;
-    }
+    public string id;
+    public string account;
+    public string password;
+    public string phone;
+    public int zhanshilevel;
+    public int fashilevel;
+    public int huanshilevel;
+    public string createtime;
 
-    public override void initKey()
+    public static Table_User init(Object[] data)
     {
-        keyList.Add(new TableKeyObj("id", TableKeyObj.ValueType.ValueType_string));
-        keyList.Add(new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string));
-        keyList.Add(new TableKeyObj("password", TableKeyObj.ValueType.ValueType_string));
-        keyList.Add(new TableKeyObj("phone", TableKeyObj.ValueType.ValueType_string));
-        keyList.Add(new TableKeyObj("zhanshilevel", TableKeyObj.ValueType.ValueType_int));
-        keyList.Add(new TableKeyObj("fashilevel", TableKeyObj.ValueType.ValueType_int));
-        keyList.Add(new TableKeyObj("huanshilevel", TableKeyObj.ValueType.ValueType_int));
-        keyList.Add(new TableKeyObj("createtime", TableKeyObj.ValueType.ValueType_string));
+        Table_User table = new Table_User();
+
+        table.id = data[0].ToString();
+        table.account = data[1].ToString();
+        table.password = data[2].ToString();
+        table.phone = data[3].ToString();
+        table.zhanshilevel = (int)data[4];
+        table.fashilevel = (int)data[5];
+        table.huanshilevel = (int)data[6];
+        table.createtime = data[7].ToString();
+
+        return table;
     }
 }

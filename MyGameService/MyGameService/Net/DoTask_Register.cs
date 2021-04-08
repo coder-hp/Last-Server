@@ -22,14 +22,13 @@ namespace MyGameService.Net
                 string account = c2s.Account;
                 string password = c2s.Password;
 
-                List<TableKeyObj> keylist = new List<TableKeyObj>() { new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string, account) };
-
+                List<KeyData> keylist = new List<KeyData>() { new KeyData("account", account) };
                 MySqlUtil.getInstance().addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData) =>
                 {
-                    if (cmdReturnData.code == 1)
+                    if (cmdReturnData.result == CmdResult.OK)
                     {
-                        List<DBTablePreset> list = cmdReturnData.listData;
-                        if (list != null && list.Count > 0)
+                        Object[] list = cmdReturnData.listData;
+                        if (list != null && list.Length > 0)
                         {
                             s2c.Code = (int)CSParam.CodeType.RegisterFail_Exist;
                             Socket_S.getInstance().Send(clientInfo, s2c);
@@ -37,15 +36,14 @@ namespace MyGameService.Net
                         else
                         {
                             string userId = account + password;
-                            List<TableKeyObj> keylist2 = new List<TableKeyObj>() {
-                                new TableKeyObj("id", TableKeyObj.ValueType.ValueType_string, userId),
-                                new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string, account),
-                                new TableKeyObj("password", TableKeyObj.ValueType.ValueType_int, password)
+                            List<KeyData> keylist2 = new List<KeyData>() {
+                                new KeyData("id",userId),
+                                new KeyData("account", account),
+                                new KeyData("password", password)
                             };
-
                             MySqlUtil.getInstance().addCommand(CmdType.insert, "user", null, keylist2, (CmdReturnData cmdReturnData2) =>
                             {
-                                if (cmdReturnData2.code == 1)
+                                if (cmdReturnData2.result == CmdResult.OK)
                                 {
                                     s2c.Code = (int)CSParam.CodeType.Ok;
                                     s2c.UserId = userId;

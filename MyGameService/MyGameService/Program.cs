@@ -39,7 +39,7 @@ namespace MyGameService
                 // 用API安装事件处理  
                 ConsoleCtrlDelegate newDelegate = new ConsoleCtrlDelegate(HandlerRoutine);
                 bool bRet = SetConsoleCtrlHandler(newDelegate, true);
-                if (bRet == false) 
+                if (bRet == false)
                 {
                     // 安装关闭事件失败
                 }

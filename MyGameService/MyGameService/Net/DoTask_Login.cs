@@ -22,31 +22,23 @@ namespace MyGameService.Net
                 string account = c2s.Account;
                 string password = c2s.Password;
 
-                List<TableKeyObj> keylist = new List<TableKeyObj>() { new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string, account) };
+                List<KeyData> keylist = new List<KeyData>() { new KeyData("account", account) };
 
                 MySqlUtil.getInstance().addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData) =>
                 {
-                    if (cmdReturnData.code == 1)
+                    if (cmdReturnData.result == CmdResult.OK)
                     {
-                        
-                        List<DBTablePreset> list = cmdReturnData.listData;
-                        if (list != null && list.Count > 0)
+                        Object[] list = cmdReturnData.listData;
+                        if (list != null && list.Length > 0)
                         {
-                            string _userId = list[0].keyList[0].m_value.ToString();
-                            string _account = list[0].keyList[1].m_value.ToString();
-                            string _password = list[0].keyList[2].m_value.ToString();
-                            string _phone = list[0].keyList[3].m_value.ToString();
-                            int _zhanshiLevel = (int)list[0].keyList[4].m_value;
-                            int _fashiLevel = (int)list[0].keyList[5].m_value;
-                            int _huanshiLevel = (int)list[0].keyList[6].m_value;
-
-                            if (_password == password)
+                            Table_User table_User = Table_User.init(list);
+                            if (table_User.password == password)
                             {
                                 s2c.Code = (int)CSParam.CodeType.Ok;
-                                s2c.UserId = _userId;
-                                s2c.zhanshiLevel = _zhanshiLevel;
-                                s2c.fashiLevel = _fashiLevel;
-                                s2c.huanshiLevel = _huanshiLevel;
+                                s2c.UserId = table_User.id;
+                                s2c.zhanshiLevel = table_User.zhanshilevel;
+                                s2c.fashiLevel = table_User.fashilevel;
+                                s2c.huanshiLevel = table_User.huanshilevel;
                                 Socket_S.getInstance().Send(clientInfo, s2c);
                             }
                             else
@@ -61,7 +53,7 @@ namespace MyGameService.Net
                             Socket_S.getInstance().Send(clientInfo, s2c);
                         }
                     }
-                    else if (cmdReturnData.code == -1)
+                    else
                     {
                         s2c.Code = (int)CSParam.CodeType.ServerError;
                         Socket_S.getInstance().Send(clientInfo, s2c);
