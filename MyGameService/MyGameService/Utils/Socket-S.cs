@@ -143,49 +143,59 @@ namespace SocketUtil
                     if (recelong != 0)
                     {
                         string reces = Encoding.UTF8.GetString(rece, 0, recelong);
+                        CommonUtil.Log(string.Format("收到客户端{0}原生数据{1}", client.m_id, reces));
 
-                        reces = m_endStr + reces;
-
-                        List<string> list = new List<string>();
-                        bool b = CommonUtil.splitStrIsPerfect(reces, list, m_packEndFlag);
-
-                        if (b)
+                        // 过滤http非法请求
+                        if (reces.StartsWith("GET") || reces.StartsWith("POST"))
                         {
-                            for (int i = 0; i < list.Count; i++)
-                            {
-                                if (list[i].CompareTo(m_heartBeatFlag) == 0)
-                                {
-                                    ClientInfoManager.heartBeat(client);
-                                }
-                                else
-                                {
-                                    if (m_onSocketEvent_Receive != null)
-                                    {
-                                        m_onSocketEvent_Receive(client, list[i]);
-                                    }
-                                }
-                            }
-
-                            m_endStr = "";
+                            CommonUtil.Log("收到客户端GET/POST非法请求，主动断开链接:" + client.m_id);
+                            DisconnectWithClient(client,true);
+                            break;
                         }
                         else
                         {
-                            for (int i = 0; i < list.Count - 1; i++)
+                            reces = m_endStr + reces;
+                            List<string> list = new List<string>();
+                            bool b = CommonUtil.splitStrIsPerfect(reces, list, m_packEndFlag);
+
+                            if (b)
                             {
-                                if (list[i].CompareTo(m_heartBeatFlag) == 0)
+                                for (int i = 0; i < list.Count; i++)
                                 {
-                                    ClientInfoManager.heartBeat(client);
-                                }
-                                else
-                                {
-                                    if (m_onSocketEvent_Receive != null)
+                                    if (list[i].CompareTo(m_heartBeatFlag) == 0)
                                     {
-                                        m_onSocketEvent_Receive(client, list[i]);
+                                        ClientInfoManager.heartBeat(client);
+                                    }
+                                    else
+                                    {
+                                        if (m_onSocketEvent_Receive != null)
+                                        {
+                                            m_onSocketEvent_Receive(client, list[i]);
+                                        }
                                     }
                                 }
-                            }
 
-                            m_endStr = list[list.Count - 1];
+                                m_endStr = "";
+                            }
+                            else
+                            {
+                                for (int i = 0; i < list.Count - 1; i++)
+                                {
+                                    if (list[i].CompareTo(m_heartBeatFlag) == 0)
+                                    {
+                                        ClientInfoManager.heartBeat(client);
+                                    }
+                                    else
+                                    {
+                                        if (m_onSocketEvent_Receive != null)
+                                        {
+                                            m_onSocketEvent_Receive(client, list[i]);
+                                        }
+                                    }
+                                }
+
+                                m_endStr = list[list.Count - 1];
+                            }
                         }
                     }
                     // 与客户端断开连接
@@ -200,7 +210,7 @@ namespace SocketUtil
             }
             catch (Exception ex)
             {
-                //CommonUtil.Log("OnReceive异常：" + ex);
+                CommonUtil.Log("OnReceive异常：" + ex);
             }
         }
 
@@ -231,10 +241,15 @@ namespace SocketUtil
             }
         }
 
-        public void DisconnectWithClient(ClientInfo client)
+        public void DisconnectWithClient(ClientInfo client,bool isCloseConnect = false)
         {
             CommonUtil.Log("客户端断开：" + client.m_id);
             ClientInfoManager.deleteClientInfo(client);
+
+            if(isCloseConnect)
+            {
+                client.m_socketToClient.Close();
+            }
             if (m_onSocketEvent_Disconnect != null)
             {
                 m_onSocketEvent_Disconnect(client);

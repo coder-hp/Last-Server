@@ -31,25 +31,28 @@ namespace MyGameService
                 ConfigEntity.getInstance().data = JsonConvert.DeserializeObject<ConfigData>(config);
             }
 
-            var configData = ConfigEntity.getInstance().data;
-            Socket_S.getInstance().Start("0.0.0.0", configData.server_port);
-            Socket_S.getInstance().m_onSocketEvent_Receive = OnReceive;
-
+            if (true)
             {
-                // 用API安装事件处理  
-                ConsoleCtrlDelegate newDelegate = new ConsoleCtrlDelegate(HandlerRoutine);
-                bool bRet = SetConsoleCtrlHandler(newDelegate, true);
-                if (bRet == false)
-                {
-                    // 安装关闭事件失败
-                }
-                else
-                {
-                    // 安装关闭事件成功
-                }
-            }
+                var configData = ConfigEntity.getInstance().data;
+                Socket_S.getInstance().Start("0.0.0.0", configData.server_port);
+                Socket_S.getInstance().m_onSocketEvent_Receive = OnReceive;
 
-            MySqlUtil.getInstance().openDatabase();
+                {
+                    // 用API安装事件处理  
+                    ConsoleCtrlDelegate newDelegate = new ConsoleCtrlDelegate(HandlerRoutine);
+                    bool bRet = SetConsoleCtrlHandler(newDelegate, true);
+                    if (bRet == false)
+                    {
+                        // 安装关闭事件失败
+                    }
+                    else
+                    {
+                        // 安装关闭事件成功
+                    }
+                }
+
+                MySqlUtil.getInstance().openDatabase();
+            }
 
             Console.ReadKey();
             Console.ReadKey();
@@ -84,6 +87,7 @@ namespace MyGameService
             }
             else if(data_split.Length > 0)
             {
+                data_split[data_split.Length - 1] = "{" + data_split[data_split.Length - 1];
                 CommonUtil.Log("收到" + clientInfo.m_id + "异常消息：" + data);
                 CommonUtil.Log("收到" + clientInfo.m_id + "异常消息转换后：" + data_split[data_split.Length - 1]);
                 DoTaskClientReq.Do(clientInfo, data_split[data_split.Length - 1]);
