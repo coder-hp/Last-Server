@@ -321,4 +321,9 @@ public class CommonUtil
 
         return i;
     }
+
+    static public void Log(object data,bool isAddLine = true)
+    {
+        Console.WriteLine(getCurTimeNormalFormat() + "----" + data + (isAddLine ? "\n":""));
+    }
 }

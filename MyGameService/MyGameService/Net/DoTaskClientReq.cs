@@ -32,14 +32,14 @@ namespace SocketUtil
 
                     default:
                         {
-                            Console.WriteLine("未知tag，不予处理：" + data);
+                            CommonUtil.Log("未知tag，不予处理：" + data);
                         }
                         break;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("客户端传的数据有问题：" + data);
+                CommonUtil.Log("客户端传的数据有问题：" + data);
             }
         }
     }

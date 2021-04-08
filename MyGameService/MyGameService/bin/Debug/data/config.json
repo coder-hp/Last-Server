@@ -4,5 +4,6 @@
   "sql_port": 3306,
   "user": "beatfire",
   "password": "Hp582254172",
-  "databaseName": "darkword"
+  "databaseName": "darkword",
+  "timerReqSql": 3600
 }

@@ -84,15 +84,18 @@ class MySqlUtil
             //进行数据库连接
             m_mySqlConnection.Open();
 
-            Console.WriteLine("数据库打开成功\n");
+            CommonUtil.Log("数据库打开成功");
 
             DBTableManager.getInstance().init();
 
             startCmdThread();
+
+            // 定时请求数据库，防止断开
+            TimerUtil.start(configData.timerReqSql * 1000, startDingShiReq);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex + "\r\n");
+            CommonUtil.Log(ex);
         }
     }
 
@@ -113,6 +116,15 @@ class MySqlUtil
         TimerUtil.start(10, newThread);
     }
 
+    void startDingShiReq(object source, System.Timers.ElapsedEventArgs e)
+    {
+        List<TableKeyObj> keylist = new List<TableKeyObj>() { new TableKeyObj("account", TableKeyObj.ValueType.ValueType_string, "hp") };
+        addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData) =>
+        {
+            CommonUtil.Log("定时请求数据库，防止断开");
+        });
+    }
+
     void newThread(object source, System.Timers.ElapsedEventArgs e)
     {
         {
@@ -129,7 +141,7 @@ class MySqlUtil
                     if (!curMySqlDataReader.IsClosed)
                     {
                         isReady = false;
-                        Console.WriteLine("curMySqlDataReader没有Close\n");
+                        CommonUtil.Log("curMySqlDataReader没有Close");
                     }
                 }
 
@@ -144,7 +156,7 @@ class MySqlUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString() + "\n");
+                CommonUtil.Log(ex.ToString());
             }
         }
     }
@@ -210,12 +222,12 @@ class MySqlUtil
             else
             {
                 isCmding = false;
-                Console.WriteLine("cmdQueue == null\n");
+                CommonUtil.Log("cmdQueue == null");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString() + "\n");
+            CommonUtil.Log(ex);
         }
     }
 
@@ -268,7 +280,7 @@ class MySqlUtil
         {
             if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
             {
-                Console.WriteLine("数据库连接断开，开始重新连接\n");
+                CommonUtil.Log("数据库连接断开，开始重新连接");
                 openDatabase();
             }
 
@@ -301,7 +313,7 @@ class MySqlUtil
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString() + "\n");
+            CommonUtil.Log(ex);
 
             return null;
         }
@@ -333,7 +345,7 @@ class MySqlUtil
                     command += " and ";
                 }
             }
-            //Console.WriteLine(command);
+            //CommonUtil.Log(command);
 
             MySqlDataReader dr = ExecuteCommandHasReturn(command);
             curMySqlDataReader = dr;
@@ -365,7 +377,7 @@ class MySqlUtil
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString() + "\n");
+            CommonUtil.Log(ex);
 
             return null;
         }
@@ -418,7 +430,7 @@ class MySqlUtil
 
             if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
             {
-                Console.WriteLine("数据库连接断开，开始重新连接\n");
+                CommonUtil.Log("数据库连接断开，开始重新连接");
                 openDatabase();
             }
 
@@ -428,7 +440,7 @@ class MySqlUtil
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString() + "\n");
+            CommonUtil.Log(ex);
 
             return -1;
         }
@@ -463,7 +475,7 @@ class MySqlUtil
 
             if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
             {
-                Console.WriteLine("数据库连接断开，开始重新连接\n");
+                CommonUtil.Log("数据库连接断开，开始重新连接");
                 openDatabase();
             }
 
@@ -472,7 +484,7 @@ class MySqlUtil
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString() + "\n");
+            CommonUtil.Log(ex);
 
             return -1;
         }
@@ -530,7 +542,7 @@ class MySqlUtil
 
             if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
             {
-                Console.WriteLine("数据库连接断开，开始重新连接\n");
+                CommonUtil.Log("数据库连接断开，开始重新连接");
                 openDatabase();
 
                 return -1;
@@ -541,7 +553,7 @@ class MySqlUtil
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString() + "\n");
+            CommonUtil.Log(ex);
 
             return -1;
         }
@@ -553,7 +565,7 @@ class MySqlUtil
         {
             if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
             {
-                Console.WriteLine("数据库连接断开，开始重新连接\n");
+                CommonUtil.Log("数据库连接断开，开始重新连接");
                 openDatabase();
 
                 return -1;
@@ -565,7 +577,7 @@ class MySqlUtil
         catch (Exception ex)
         {
             //LogUtil.getInstance().writeErrorLog("错误信息：" + ex.Message.ToString() + "\r\n");
-            //CommonUtil.Log("错误信息：" + ex.ToString());
+            CommonUtil.Log("错误信息：" + ex);
 
             throw ex;
         }
@@ -577,7 +589,7 @@ class MySqlUtil
         {
             if (m_mySqlConnection.State == System.Data.ConnectionState.Closed)
             {
-                Console.WriteLine("数据库连接断开，开始重新连接\n");
+                CommonUtil.Log("数据库连接断开，开始重新连接");
                 openDatabase();
 
                 return null;
@@ -589,7 +601,7 @@ class MySqlUtil
         }
         catch (Exception ex)
         {
-            //CommonUtil.Log("错误信息：" + ex.ToString());
+            CommonUtil.Log("错误信息：" + ex);
 
             throw ex;
         }

@@ -62,7 +62,7 @@ namespace SocketUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Socket启动失败:" + ex);
+                CommonUtil.Log("Socket启动失败:" + ex);
             }
         }
 
@@ -73,11 +73,11 @@ namespace SocketUtil
                 m_isStart = false;
                 m_socket.Close();
 
-                Console.WriteLine("Socket停止成功:");
+                CommonUtil.Log("Socket停止成功:");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Socket停止异常:" + ex);
+                CommonUtil.Log("Socket停止异常:" + ex);
             }
         }
 
@@ -91,11 +91,11 @@ namespace SocketUtil
                 m_socket.Bind(iPEndPoint);
                 m_socket.Listen(400);
 
-                Console.WriteLine("ipPort:" + m_ipPort);
-                Console.WriteLine("服务器启动成功...\n");
+                CommonUtil.Log("ipPort:" + m_ipPort);
+                CommonUtil.Log("服务器启动成功...");
 
-                ClientInfoManager.startCheckHeartBeat();
-
+                // 心跳检测
+                //ClientInfoManager.startCheckHeartBeat();
 
                 while (m_isStart)
                 {
@@ -107,7 +107,7 @@ namespace SocketUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SocketServer监听异常:" + ex);
+                CommonUtil.Log("SocketServer监听异常:" + ex);
             }
         }
 
@@ -118,14 +118,14 @@ namespace SocketUtil
             {
                 ClientInfo client = (ClientInfo)clientInfo;
 
-                Console.WriteLine("有客户端连接：id=" + client.m_id + "   ip=" + client.m_ip + "\n");
+                CommonUtil.Log("有客户端连接：id=" + client.m_id + "   ip=" + client.m_ip);
 
                 // 接收消息
                 OnReceive(clientInfo);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("OnAccept异常:" + ex);
+                CommonUtil.Log("OnAccept异常:" + ex);
             }
         }
 
@@ -191,7 +191,7 @@ namespace SocketUtil
                     // 与客户端断开连接
                     else
                     {
-                        Console.WriteLine("与客户端断开连接,id=" + client.m_id + "\n");
+                        CommonUtil.Log("与客户端断开连接,id=" + client.m_id);
                         DisconnectWithClient(client);
 
                         return;
@@ -200,7 +200,7 @@ namespace SocketUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine("OnReceive异常：" + ex);
+                //CommonUtil.Log("OnReceive异常：" + ex);
             }
         }
 
@@ -215,7 +215,7 @@ namespace SocketUtil
                     return;
                 }
 
-                Console.WriteLine("返回消息给客户端" + clientInfo.m_id + "：" + data + "\n");
+                CommonUtil.Log("返回消息给客户端" + clientInfo.m_id + "：" + data);
 
                 // 增加数据包尾部标识
                 data += m_packEndFlag;
@@ -227,15 +227,14 @@ namespace SocketUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Send异常：" + ex);
+                CommonUtil.Log("Send异常：" + ex);
             }
         }
 
         public void DisconnectWithClient(ClientInfo client)
         {
-            Console.WriteLine("客户端断开：" + client.m_id + "\n");
+            CommonUtil.Log("客户端断开：" + client.m_id);
             ClientInfoManager.deleteClientInfo(client);
-
             if (m_onSocketEvent_Disconnect != null)
             {
                 m_onSocketEvent_Disconnect(client);

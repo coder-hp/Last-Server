@@ -12,6 +12,7 @@ public class ConfigData
     public string user;
     public string password;
     public string databaseName;
+    public int timerReqSql;
 }
 
 public class ConfigEntity

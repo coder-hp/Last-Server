@@ -66,7 +66,7 @@ namespace MyGameService
             {
                 case CTRL_CLOSE_EVENT:       //用户要关闭Console了  
                     {
-                        Console.WriteLine("控制台关闭");
+                        CommonUtil.Log("控制台关闭");
                     }
                     break;
             }
@@ -76,7 +76,7 @@ namespace MyGameService
 
         static void OnReceive(ClientInfo clientInfo, string data)
         {
-            Console.WriteLine("收到" + clientInfo .m_id + "消息：" + data);
+            CommonUtil.Log("收到" + clientInfo .m_id + "消息：" + data);
 
             DoTaskClientReq.Do(clientInfo, data);
         }
