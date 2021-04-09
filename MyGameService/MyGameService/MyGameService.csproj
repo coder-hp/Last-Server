@@ -55,11 +55,13 @@
     <Compile Include="Commons\CS-Param.cs" />
     <Compile Include="Data\ConfigEntity.cs" />
     <Compile Include="Net\DoTaskClientReq.cs" />
+    <Compile Include="Net\DoTask_Bag.cs" />
     <Compile Include="Net\DoTask_Register.cs" />
     <Compile Include="Net\DoTask_Login.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Table\User_Preset.cs" />
+    <Compile Include="Table\Table_Bag.cs" />
+    <Compile Include="Table\Table_User.cs" />
     <Compile Include="Utils\ClientInfoManager.cs" />
     <Compile Include="Utils\CommonUtil.cs" />
     <Compile Include="Utils\FileIO.cs" />

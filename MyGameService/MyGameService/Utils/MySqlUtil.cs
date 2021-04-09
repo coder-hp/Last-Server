@@ -56,9 +56,9 @@ public class CmdQueue
 public class CmdReturnData
 {
     public CmdResult result;
-    public Object[] listData;
+    public List<Object> listData;
 
-    public CmdReturnData(CmdResult _result, Object[] _listData = null)
+    public CmdReturnData(CmdResult _result, List<Object> _listData = null)
     {
         result = _result;
         listData = _listData;
@@ -184,7 +184,7 @@ class MySqlUtil
                 {
                     case CmdType.query:
                         {
-                            Object[] data = getTableData(cmdQueue.table, cmdQueue.tiaojian_keyObjList);
+                            List<Object> data = getTableData(cmdQueue.table, cmdQueue.tiaojian_keyObjList);
                             if (cmdQueue.onCmdCallBack != null)
                             {
                                 doCmdComplete(cmdQueue);
@@ -289,7 +289,7 @@ class MySqlUtil
     }
 
     // 数据库查询-遍历整个表
-    Object[] queryDatabaseTable(string table)
+    List<Object> queryDatabaseTable(string table)
     {
         //try
         //{
@@ -336,7 +336,7 @@ class MySqlUtil
     }
 
     // 数据库查询-按条件查询
-    Object[] getTableData(string table, List<KeyData> keyObjList)
+    List<Object> getTableData(string table, List<KeyData> keyObjList)
     {
         try
         {
@@ -374,15 +374,22 @@ class MySqlUtil
                 return null;
             }
 
-            Object[] values = null;
+            // while每执行一次，读取一条记录，如果查询返回的数据有n条，则while执行n次
+            List<Object> values = new List<object>();
             while (dr.Read())
             {
-                values = new Object[dr.FieldCount];
-                int fieldCount = dr.GetValues(values);
+                //CommonUtil.Log("dr.FieldCount=" + dr.FieldCount);
+                
+                Object[] temp_values = new Object[dr.FieldCount];
+                int fieldCount = dr.GetValues(temp_values);
+
+                for(int i = 0; i< temp_values.Length; i++)
+                {
+                    values.Add(temp_values[i]);
+                }
             }
-
             dr.Close();
-
+            
             return values;
         }
         catch (Exception ex)

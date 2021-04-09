@@ -28,8 +28,8 @@ namespace MyGameService.Net
                 {
                     if (cmdReturnData.result == CmdResult.OK)
                     {
-                        Object[] list = cmdReturnData.listData;
-                        if (list != null && list.Length > 0)
+                        List<Object> list = cmdReturnData.listData;
+                        if (list != null && list.Count > 0)
                         {
                             Table_User table_User = Table_User.init(list);
                             if (table_User.password == password)

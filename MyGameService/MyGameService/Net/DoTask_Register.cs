@@ -22,22 +22,24 @@ namespace MyGameService.Net
                 string account = c2s.Account;
                 string password = c2s.Password;
 
+                // 先查询这个账号是否存在
                 List<KeyData> keylist = new List<KeyData>() { new KeyData("account", account) };
                 MySqlUtil.getInstance().addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData) =>
                 {
                     if (cmdReturnData.result == CmdResult.OK)
                     {
-                        Object[] list = cmdReturnData.listData;
-                        if (list != null && list.Length > 0)
+                        List<Object> list = cmdReturnData.listData;
+
+                        // 已存在，注册失败
+                        if (list != null && list.Count > 0)
                         {
                             s2c.Code = (int)CSParam.CodeType.RegisterFail_Exist;
                             Socket_S.getInstance().Send(clientInfo, s2c);
                         }
+                        // 不存在，先插入数据
                         else
                         {
-                            string userId = account + password;
                             List<KeyData> keylist2 = new List<KeyData>() {
-                                new KeyData("id",userId),
                                 new KeyData("account", account),
                                 new KeyData("password", password)
                             };
@@ -45,13 +47,37 @@ namespace MyGameService.Net
                             {
                                 if (cmdReturnData2.result == CmdResult.OK)
                                 {
-                                    s2c.Code = (int)CSParam.CodeType.Ok;
-                                    s2c.UserId = userId;
-                                    Socket_S.getInstance().Send(clientInfo, s2c);
+                                    // 插完数据后再查询该账号，返回userId
+                                    MySqlUtil.getInstance().addCommand(CmdType.query, "user", keylist, null, (CmdReturnData cmdReturnData3) =>
+                                    {
+                                        if (cmdReturnData3.result == CmdResult.OK)
+                                        {
+                                            List<Object> list3 = cmdReturnData3.listData;
+                                            if (list3 != null && list3.Count > 0)
+                                            {
+                                                Table_User table_User = Table_User.init(list3);
+                                                s2c.Code = (int)CSParam.CodeType.Ok;
+                                                s2c.UserId = table_User.id;
+                                                Socket_S.getInstance().Send(clientInfo, s2c);
+                                            }
+                                            else
+                                            {
+                                                CommonUtil.Log("插入新用户数据后查询不到:account=" + account);
+                                                s2c.Code = (int)CSParam.CodeType.ServerError;
+                                                Socket_S.getInstance().Send(clientInfo, s2c);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            s2c.Code = (int)CSParam.CodeType.ServerError;
+                                            Socket_S.getInstance().Send(clientInfo, s2c);
+                                        }
+                                    });
                                 }
                                 // 插入新用户数据失败
                                 else
                                 {
+                                    CommonUtil.Log("插入新用户数据失败:account=" + account);
                                     s2c.Code = (int)CSParam.CodeType.ServerError;
                                     Socket_S.getInstance().Send(clientInfo, s2c);
                                 }

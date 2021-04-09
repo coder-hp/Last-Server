@@ -30,6 +30,12 @@ namespace SocketUtil
                         }
                         break;
 
+                    case (int)CSParam.NetTag.Bag:
+                        {
+                            DoTask_Bag.Do(clientInfo, data);
+                        }
+                        break;
+
                     default:
                         {
                             CommonUtil.Log("未知tag，不予处理：" + data);

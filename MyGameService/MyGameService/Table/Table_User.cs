@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class Table_User
 {
-    public string id;
+    public int id;
     public string account;
     public string password;
     public string phone;
@@ -15,11 +15,11 @@ public class Table_User
     public int huanshilevel;
     public string createtime;
 
-    public static Table_User init(Object[] data)
+    public static Table_User init(List<Object> data)
     {
         Table_User table = new Table_User();
 
-        table.id = data[0].ToString();
+        table.id = (int)data[0];
         table.account = data[1].ToString();
         table.password = data[2].ToString();
         table.phone = data[3].ToString();
