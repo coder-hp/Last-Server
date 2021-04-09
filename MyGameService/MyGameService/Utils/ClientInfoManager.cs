@@ -14,6 +14,7 @@ namespace SocketUtil
         public string m_ip;
         public Socket m_socketToClient;
         public string m_lastHeratBeatTime;
+        public string m_endStr = "";
 
         public ClientInfo(int id, Socket socketToClient)
         {

@@ -23,7 +23,6 @@ namespace SocketUtil
 
         // 数据包尾部标识
         public char m_packEndFlag = (char)1;
-        public string m_endStr = "";
 
         // 心跳包标记
         public string m_heartBeatFlag = "*HeartBeat*";
@@ -143,7 +142,7 @@ namespace SocketUtil
                     if (recelong != 0)
                     {
                         string reces = Encoding.UTF8.GetString(rece, 0, recelong);
-                        CommonUtil.Log(string.Format("收到客户端{0}原生数据{1}", client.m_id, reces));
+                        //CommonUtil.Log(string.Format("收到客户端{0}原生数据{1}  size={2}", client.m_id, reces, reces.Length));
 
                         // 过滤http非法请求
                         if (reces.StartsWith("GET") || reces.StartsWith("POST"))
@@ -154,7 +153,7 @@ namespace SocketUtil
                         }
                         else
                         {
-                            reces = m_endStr + reces;
+                            reces = client.m_endStr + reces;
                             List<string> list = new List<string>();
                             bool b = CommonUtil.splitStrIsPerfect(reces, list, m_packEndFlag);
 
@@ -175,7 +174,7 @@ namespace SocketUtil
                                     }
                                 }
 
-                                m_endStr = "";
+                                client.m_endStr = "";
                             }
                             else
                             {
@@ -194,7 +193,7 @@ namespace SocketUtil
                                     }
                                 }
 
-                                m_endStr = list[list.Count - 1];
+                                client.m_endStr = list[list.Count - 1];
                             }
                         }
                     }
