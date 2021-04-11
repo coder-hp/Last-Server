@@ -103,7 +103,7 @@ class MySqlUtil
             startCmdThread();
 
             // 定时请求数据库，防止断开
-            TimerUtil.start(configData.timerReqSql * 1000, startDingShiReq);
+            //TimerUtil.start(configData.timerReqSql * 1000, startDingShiReq);
         }
         catch (Exception ex)
         {
