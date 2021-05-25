@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyGameService.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -64,6 +65,7 @@ namespace SocketUtil
 
         public static void deleteClientInfo(ClientInfo clientInfo)
         {
+            MatchLogic.removeUser(clientInfo);
             s_clientList.Remove(clientInfo);
         }
 

@@ -16,31 +16,29 @@ namespace SocketUtil
             {
                 C2SBaseData c2sBaseData = JsonConvert.DeserializeObject<C2SBaseData>(data);
                 
-                switch (c2sBaseData.Tag)
+                if(c2sBaseData.Tag == CSParam.NetTag.Login.ToString())
                 {
-                    case (int)CSParam.NetTag.Login:
-                        {
-                            DoTask_Login.Do(clientInfo, data);
-                        }
-                        break;
-
-                    case (int)CSParam.NetTag.Register:
-                        {
-                            DoTask_Register.Do(clientInfo, data);
-                        }
-                        break;
-
-                    case (int)CSParam.NetTag.Bag:
-                        {
-                            DoTask_Bag.Do(clientInfo, data);
-                        }
-                        break;
-
-                    default:
-                        {
-                            CommonUtil.Log("未知tag，不予处理：" + data);
-                        }
-                        break;
+                    DoTask_Login.Do(clientInfo, data);
+                }
+                else if (c2sBaseData.Tag == CSParam.NetTag.Register.ToString())
+                {
+                    DoTask_Register.Do(clientInfo, data);
+                }
+                else if (c2sBaseData.Tag == CSParam.NetTag.Bag.ToString())
+                {
+                    DoTask_Bag.Do(clientInfo, data);
+                }
+                else if (c2sBaseData.Tag == CSParam.NetTag.EnterGameMode2.ToString())
+                {
+                    DoTask_EnterGameMode2.Do(clientInfo, data);
+                }
+                else if (c2sBaseData.Tag == CSParam.NetTag.SubmitState.ToString())
+                {
+                    DoTask_SubmitState.Do(clientInfo, data);
+                }
+                else
+                {
+                    CommonUtil.Log("未知tag，不予处理：" + data);
                 }
             }
             catch (Exception ex)

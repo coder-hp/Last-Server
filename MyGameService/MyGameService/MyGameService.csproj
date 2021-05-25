@@ -54,8 +54,13 @@
   <ItemGroup>
     <Compile Include="Commons\CS-Param.cs" />
     <Compile Include="Data\ConfigEntity.cs" />
+    <Compile Include="Game\MatchLogic.cs" />
+    <Compile Include="Game\RoomLogic.cs" />
+    <Compile Include="Game\RoomManager.cs" />
     <Compile Include="Net\DoTaskClientReq.cs" />
     <Compile Include="Net\DoTask_Bag.cs" />
+    <Compile Include="Net\DoTask_SubmitState.cs" />
+    <Compile Include="Net\DoTask_EnterGameMode2.cs" />
     <Compile Include="Net\DoTask_Register.cs" />
     <Compile Include="Net\DoTask_Login.cs" />
     <Compile Include="Program.cs" />

@@ -14,7 +14,7 @@ namespace MyGameService.Net
         public static void Do(ClientInfo clientInfo, string data)
         {
             S2C_Register s2c = new S2C_Register();
-            s2c.Tag = (int)CSParam.NetTag.Register;
+            s2c.Tag = CSParam.NetTag.Register.ToString();
             s2c.Code = (int)CSParam.CodeType.Ok;
             try
             {

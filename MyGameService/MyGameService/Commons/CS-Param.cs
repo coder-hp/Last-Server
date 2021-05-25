@@ -8,6 +8,10 @@ public class CSParam
         Register,
         Login,
         Bag,
+        EnterGameMode2,
+        GameMode2Start,
+        SubmitState,
+        BroadcastState,
     }
 
     public enum CodeType
@@ -22,13 +26,12 @@ public class CSParam
 
 public class C2SBaseData
 {
-    public int Tag;
-    public int UserId = 0;
+    public string Tag;
 }
 
 public class S2CBaseData
 {
-    public int Tag;
+    public string Tag;
     public int Code;
 }
 
@@ -62,10 +65,45 @@ public class S2C_Register : S2CBaseData
 
 public class C2S_Bag : C2SBaseData
 {
-    //public int UserId = 0;
+    public int UserId = 0;
 }
 
 public class S2C_Bag : S2CBaseData
 {
     public string data = "";
+}
+
+public class C2S_EnterGameMode2 : C2SBaseData
+{
+    public int UserId = 0;
+}
+
+public class S2C_EnterGameMode2 : S2CBaseData
+{
+}
+
+public class C2S_SubmitState : C2SBaseData
+{
+    public int UserId = 0;
+    public int action = 0;
+    public float pos_x = 0;
+    public float pos_y = 0;
+    public float pos_z = 0;
+    public float rotate_y = 0;
+}
+
+// ------------------------服务器通知-------------------------
+public class S2C_GameMode2Start : S2CBaseData
+{
+    public List<int> allUserId = new List<int>();
+}
+
+public class S2C_BroadcastState : S2CBaseData
+{
+    public int UserId = 0;
+    public int action = 0;
+    public float pos_x = 0;
+    public float pos_y = 0;
+    public float pos_z = 0;
+    public float rotate_y = 0;
 }
