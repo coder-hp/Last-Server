@@ -66,6 +66,7 @@ namespace SocketUtil
         public static void deleteClientInfo(ClientInfo clientInfo)
         {
             MatchLogic.removeUser(clientInfo);
+            RoomManager.deleteUser(clientInfo);
             s_clientList.Remove(clientInfo);
         }
 

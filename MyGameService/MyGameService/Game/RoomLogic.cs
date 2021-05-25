@@ -46,11 +46,49 @@ namespace MyGameService.Game
             return false;
         }
 
+        public bool checkIsExistUser(ClientInfo clientInfo)
+        {
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                if (list_user[i].clientInfo == clientInfo)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void deleteUser(int userId)
+        {
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                if (list_user[i].userId == userId)
+                {
+                    list_user.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public void deleteUser(ClientInfo clientInfo)
+        {
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                if (list_user[i].clientInfo == clientInfo)
+                {
+                    list_user.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
         public void broadcastState(C2S_SubmitState c2s)
         {
             S2C_BroadcastState s2c = new S2C_BroadcastState();
             s2c.Tag = CSParam.NetTag.BroadcastState.ToString();
             s2c.Code = (int)CSParam.CodeType.Ok;
+            s2c.UserId = c2s.UserId;
             s2c.action = c2s.action;
             s2c.pos_x = c2s.pos_x;
             s2c.pos_y = c2s.pos_y;

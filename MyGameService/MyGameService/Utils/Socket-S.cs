@@ -232,7 +232,10 @@ namespace SocketUtil
                 Socket socketToClient = clientInfo.m_socketToClient;
 
                 byte[] bytes = Encoding.UTF8.GetBytes(data);
-                socketToClient.Send(bytes);
+                if (socketToClient.Connected)
+                {
+                    socketToClient.Send(bytes);
+                }
             }
             catch (Exception ex)
             {
