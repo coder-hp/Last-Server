@@ -20,6 +20,8 @@ namespace MyGameService
         //当用户关闭Console时，系统会发送次消息  
         private const int CTRL_CLOSE_EVENT = 2;
 
+        static bool isShowLog = false;
+
         static void Main(string[] args)
         {
             // 读取文件
@@ -82,14 +84,21 @@ namespace MyGameService
             string[] data_split = data.Split('{');
             if (data_split.Length == 2 && data_split[0] == "")
             {
-                CommonUtil.Log("收到" + clientInfo.m_id + "消息：" + data);
+                if (isShowLog)
+                {
+                    CommonUtil.Log("收到" + clientInfo.m_id + "消息：" + data);
+                }
                 DoTaskClientReq.Do(clientInfo, data);
             }
             else if(data_split.Length > 0)
             {
                 data_split[data_split.Length - 1] = "{" + data_split[data_split.Length - 1];
-                CommonUtil.Log("收到" + clientInfo.m_id + "异常消息：" + data);
-                CommonUtil.Log("收到" + clientInfo.m_id + "异常消息转换后：" + data_split[data_split.Length - 1]);
+
+                if (isShowLog)
+                {
+                    CommonUtil.Log("收到" + clientInfo.m_id + "异常消息：" + data);
+                    CommonUtil.Log("收到" + clientInfo.m_id + "异常消息转换后：" + data_split[data_split.Length - 1]);
+                }
                 DoTaskClientReq.Do(clientInfo, data_split[data_split.Length - 1]);
             } 
         }

@@ -32,6 +32,14 @@ namespace SocketUtil
                 {
                     DoTask_EnterGameMode2.Do(clientInfo, data);
                 }
+                else if (c2sBaseData.Tag == CSParam.NetTag.UserReady.ToString())
+                {
+                    DoTask_UserReady.Do(clientInfo, data);
+                }
+                else if (c2sBaseData.Tag == CSParam.NetTag.GetUserState.ToString())
+                {
+                    DoTask_GetUserState.Do(clientInfo, data);
+                }
                 else if (c2sBaseData.Tag == CSParam.NetTag.SubmitState.ToString())
                 {
                     DoTask_SubmitState.Do(clientInfo, data);

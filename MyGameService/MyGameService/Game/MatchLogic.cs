@@ -35,8 +35,8 @@ namespace MyGameService.Game
                     // 新建房间
                     RoomLogic roomLogic = new RoomLogic(new List<WaitMatchUserInfo>() { waitUserList[0] , waitUserList[1] });
 
-                    S2C_GameMode2Start s2c = new S2C_GameMode2Start();
-                    s2c.Tag = CSParam.NetTag.GameMode2Start.ToString();
+                    S2C_CanEnterGameMode2 s2c = new S2C_CanEnterGameMode2();
+                    s2c.Tag = CSParam.NetTag.CanEnterGameMode2.ToString();
                     s2c.Code = (int)CSParam.CodeType.Ok;
 
                     List<int> allUserId = new List<int>() { waitUserList[0].userId, waitUserList[1].userId};

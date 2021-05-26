@@ -34,6 +34,7 @@ namespace SocketUtil
         IPAddress m_ipAddress;
         int m_ipPort;
         bool m_isStart = false;
+        bool isShowLog = false;
 
         static Socket_S s_instance = null;
 
@@ -224,8 +225,10 @@ namespace SocketUtil
                     return;
                 }
 
-                CommonUtil.Log("返回消息给客户端" + clientInfo.m_id + "：" + data);
-
+                if (isShowLog)
+                {
+                    CommonUtil.Log("返回消息给客户端" + clientInfo.m_id + "：" + data);
+                }
                 // 增加数据包尾部标识
                 data += m_packEndFlag;
 

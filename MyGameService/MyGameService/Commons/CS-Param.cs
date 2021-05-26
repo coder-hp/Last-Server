@@ -9,8 +9,11 @@ public class CSParam
         Login,
         Bag,
         EnterGameMode2,
+        CanEnterGameMode2,
+        UserReady,
         GameMode2Start,
         SubmitState,
+        GetUserState,
         BroadcastState,
     }
 
@@ -92,18 +95,42 @@ public class C2S_SubmitState : C2SBaseData
     public float rotate_y = 0;
 }
 
+public class C2S_GetUserState : C2SBaseData
+{
+    public List<int> userId_list = new List<int>();
+}
+
+public class S2C_GetUserState : S2CBaseData
+{
+    public List<S2C_BroadcastState.BroadcastStateData> list = new List<S2C_BroadcastState.BroadcastStateData>();
+}
+
+public class C2S_UserReady : C2SBaseData
+{
+    public int UserId = 0;
+}
+
 // ------------------------服务器通知-------------------------
-public class S2C_GameMode2Start : S2CBaseData
+public class S2C_CanEnterGameMode2 : S2CBaseData
 {
     public List<int> allUserId = new List<int>();
 }
 
+public class S2C_GameMode2Start : S2CBaseData
+{
+}
+
 public class S2C_BroadcastState : S2CBaseData
 {
-    public int UserId = 0;
-    public int action = 0;
-    public float pos_x = 0;
-    public float pos_y = 0;
-    public float pos_z = 0;
-    public float rotate_y = 0;
+    public class BroadcastStateData
+    {
+        public int UserId = 0;
+        public int action = 0;
+        public float pos_x = 0;
+        public float pos_y = 0;
+        public float pos_z = 0;
+        public float rotate_y = 0;
+    }
+
+    public List<BroadcastStateData> list = new List<BroadcastStateData>();
 }
