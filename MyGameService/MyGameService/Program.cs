@@ -53,7 +53,8 @@ namespace MyGameService
                     }
                 }
 
-                MySqlUtil.getInstance().openDatabase();
+                // 打开数据库
+                // MySqlUtil.getInstance().openDatabase();
             }
 
             Console.ReadKey();

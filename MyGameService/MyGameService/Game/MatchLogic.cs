@@ -30,24 +30,39 @@ namespace MyGameService.Game
             {
                 waitUserList.Add(new WaitMatchUserInfo(clientInfo, userId));
 
-                if(waitUserList.Count >= 2)
+                // 该房间需要的人数
+                int needUserCount = 2;
+                if(waitUserList.Count >= needUserCount)
                 {
                     // 新建房间
-                    RoomLogic roomLogic = new RoomLogic(new List<WaitMatchUserInfo>() { waitUserList[0] , waitUserList[1] });
+                    List<WaitMatchUserInfo> userList = new List<WaitMatchUserInfo>();
+                    for (int i = 0; i < needUserCount; i++)
+                    {
+                        userList.Add(waitUserList[i]);
+                    }
+                    RoomLogic roomLogic = new RoomLogic(userList);
 
                     S2C_CanEnterGameMode2 s2c = new S2C_CanEnterGameMode2();
                     s2c.Tag = CSParam.NetTag.CanEnterGameMode2.ToString();
                     s2c.Code = (int)CSParam.CodeType.Ok;
 
-                    List<int> allUserId = new List<int>() { waitUserList[0].userId, waitUserList[1].userId};
+                    List<int> allUserId = new List<int>();
+                    for(int i = 0; i < needUserCount; i++)
+                    {
+                        allUserId.Add(waitUserList[i].userId);
+                    }
                     s2c.allUserId = allUserId;
 
-                    Socket_S.getInstance().Send(waitUserList[0].clientInfo, s2c);
-                    Socket_S.getInstance().Send(waitUserList[1].clientInfo, s2c);
+                    for (int i = 0; i < needUserCount; i++)
+                    {
+                        Socket_S.getInstance().Send(waitUserList[i].clientInfo, s2c);
+                    }
 
                     // 从等待队列移除
-                    waitUserList.RemoveAt(0);
-                    waitUserList.RemoveAt(0);
+                    for (int i = 0; i < needUserCount; i++)
+                    {
+                        waitUserList.RemoveAt(0);
+                    }
                 }
             }
         }
