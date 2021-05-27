@@ -87,9 +87,40 @@ namespace MyGameService.Game
                             {
                                 Socket_S.getInstance().Send(list_user[j].clientInfo, s2c);
                             }
+
+                            TimerUtil.start(30, onFrame);
                         }
                     }
                     break;
+                }
+            }
+        }
+
+        void onFrame(object source, System.Timers.ElapsedEventArgs e)
+        {
+            S2C_BroadcastState s2c = new S2C_BroadcastState();
+            s2c.Tag = CSParam.NetTag.BroadcastState.ToString();
+            s2c.Code = (int)CSParam.CodeType.Ok;
+
+            List<S2C_BroadcastState.BroadcastStateData> cmdList = new List<S2C_BroadcastState.BroadcastStateData>();
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                if(list_user[i].cmd != null)
+                {
+                    cmdList.Add(list_user[i].cmd);
+                }
+            }
+            s2c.list = cmdList;
+
+            if (cmdList.Count > 0)
+            {
+                for (int i = 0; i < list_user.Count; i++)
+                {
+                    Socket_S.getInstance().Send(list_user[i].clientInfo, s2c);
+                }
+                for (int i = 0; i < list_user.Count; i++)
+                {
+                    list_user[i].cmd = null;
                 }
             }
         }
