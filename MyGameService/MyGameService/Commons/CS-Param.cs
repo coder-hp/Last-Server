@@ -15,6 +15,7 @@ public class CSParam
         SubmitState,
         GetUserState,
         BroadcastState,
+        LeaveRoom,
     }
 
     public enum CodeType
@@ -106,6 +107,11 @@ public class S2C_GetUserState : S2CBaseData
 }
 
 public class C2S_UserReady : C2SBaseData
+{
+    public int UserId = 0;
+}
+
+public class C2S_LeaveRoom : C2SBaseData
 {
     public int UserId = 0;
 }

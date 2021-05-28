@@ -88,7 +88,7 @@ namespace MyGameService.Game
                                 Socket_S.getInstance().Send(list_user[j].clientInfo, s2c);
                             }
 
-                            TimerUtil.start(30, onFrame);
+                            TimerUtil.start(20, onFrame);
                         }
                     }
                     break;

@@ -36,6 +36,10 @@ namespace SocketUtil
                 {
                     DoTask_UserReady.Do(clientInfo, data);
                 }
+                else if (c2sBaseData.Tag == CSParam.NetTag.LeaveRoom.ToString())
+                {
+                    DoTask_LeaveRoom.Do(clientInfo, data);
+                }
                 else if (c2sBaseData.Tag == CSParam.NetTag.GetUserState.ToString())
                 {
                     DoTask_GetUserState.Do(clientInfo, data);

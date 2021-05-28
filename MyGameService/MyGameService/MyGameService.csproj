@@ -60,6 +60,7 @@
     <Compile Include="Net\DoTaskClientReq.cs" />
     <Compile Include="Net\DoTask_Bag.cs" />
     <Compile Include="Net\DoTask_GetUserState.cs" />
+    <Compile Include="Net\DoTask_LeaveRoom.cs" />
     <Compile Include="Net\DoTask_UserReady.cs" />
     <Compile Include="Net\DoTask_SubmitState.cs" />
     <Compile Include="Net\DoTask_EnterGameMode2.cs" />
