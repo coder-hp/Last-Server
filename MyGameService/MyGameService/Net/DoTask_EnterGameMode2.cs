@@ -20,7 +20,7 @@ namespace MyGameService.Net
             Socket_S.getInstance().Send(clientInfo, s2c);
 
             C2S_EnterGameMode2 c2s = JsonConvert.DeserializeObject<C2S_EnterGameMode2>(data);
-            MatchLogic.addUser(clientInfo, c2s.UserId);
+            MatchLogic.addUser(clientInfo, c2s);
         }
     }
 }

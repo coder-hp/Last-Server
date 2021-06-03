@@ -80,6 +80,7 @@ public class S2C_Bag : S2CBaseData
 public class C2S_EnterGameMode2 : C2SBaseData
 {
     public int UserId = 0;
+    public int HeroId = 1;
 }
 
 public class S2C_EnterGameMode2 : S2CBaseData
@@ -120,6 +121,7 @@ public class C2S_LeaveRoom : C2SBaseData
 public class S2C_CanEnterGameMode2 : S2CBaseData
 {
     public List<int> allUserId = new List<int>();
+    public List<int> allHeroId = new List<int>();
 }
 
 public class S2C_GameMode2Start : S2CBaseData

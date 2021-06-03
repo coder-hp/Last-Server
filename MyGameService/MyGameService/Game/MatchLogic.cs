@@ -12,11 +12,13 @@ namespace MyGameService.Game
     {
         public ClientInfo clientInfo;
         public int userId;
+        public int heroId;
 
-        public WaitMatchUserInfo(ClientInfo _clientInfo, int _userId)
+        public WaitMatchUserInfo(ClientInfo _clientInfo, int _userId, int _heroId)
         {
             clientInfo = _clientInfo;
             userId = _userId;
+            heroId = _heroId;
         }
     }
 
@@ -24,11 +26,11 @@ namespace MyGameService.Game
     {
         public static List<WaitMatchUserInfo> waitUserList = new List<WaitMatchUserInfo>();
 
-        public static void addUser(ClientInfo clientInfo,int userId)
+        public static void addUser(ClientInfo clientInfo, C2S_EnterGameMode2 c2s)
         {
-            if(!checkIsExist(userId))
+            if(!checkIsExist(c2s.UserId))
             {
-                waitUserList.Add(new WaitMatchUserInfo(clientInfo, userId));
+                waitUserList.Add(new WaitMatchUserInfo(clientInfo, c2s.UserId, c2s.HeroId));
 
                 // 该房间需要的人数
                 int needUserCount = 2;
@@ -46,12 +48,25 @@ namespace MyGameService.Game
                     s2c.Tag = CSParam.NetTag.CanEnterGameMode2.ToString();
                     s2c.Code = (int)CSParam.CodeType.Ok;
 
-                    List<int> allUserId = new List<int>();
-                    for(int i = 0; i < needUserCount; i++)
+                    // 所有玩家id
                     {
-                        allUserId.Add(waitUserList[i].userId);
+                        List<int> allUserId = new List<int>();
+                        for (int i = 0; i < needUserCount; i++)
+                        {
+                            allUserId.Add(waitUserList[i].userId);
+                        }
+                        s2c.allUserId = allUserId;
                     }
-                    s2c.allUserId = allUserId;
+
+                    // 所有玩家使用的角色id
+                    {
+                        List<int> allHeroId = new List<int>();
+                        for (int i = 0; i < needUserCount; i++)
+                        {
+                            allHeroId.Add(waitUserList[i].heroId);
+                        }
+                        s2c.allHeroId = allHeroId;
+                    }
 
                     for (int i = 0; i < needUserCount; i++)
                     {
