@@ -16,6 +16,7 @@ public class CSParam
         GetUserState,
         BroadcastState,
         LeaveRoom,
+        EnterNextMap,
     }
 
     public enum CodeType
@@ -115,6 +116,15 @@ public class C2S_UserReady : C2SBaseData
 public class C2S_LeaveRoom : C2SBaseData
 {
     public int UserId = 0;
+}
+
+public class C2S_EnterNextMap : C2SBaseData
+{
+    public int UserId;
+}
+
+public class S2C_EnterNextMap : S2CBaseData
+{
 }
 
 // ------------------------服务器通知-------------------------

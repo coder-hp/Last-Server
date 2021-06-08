@@ -48,6 +48,10 @@ namespace SocketUtil
                 {
                     DoTask_SubmitState.Do(clientInfo, data);
                 }
+                else if (c2sBaseData.Tag == CSParam.NetTag.EnterNextMap.ToString())
+                {
+                    DoTask_EnterNextMap.Do(clientInfo, data);
+                }
                 else
                 {
                     CommonUtil.Log("未知tag，不予处理：" + data);

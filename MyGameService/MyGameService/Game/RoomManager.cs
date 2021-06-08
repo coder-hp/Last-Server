@@ -46,5 +46,17 @@ namespace MyGameService.Game
                 }
             }
         }
+
+        public static void heroEnterNextMap(int userId)
+        {
+            for (int i = 0; i < list_room.Count; i++)
+            {
+                if (list_room[i].checkIsExistUser(userId))
+                {
+                    list_room[i].heroEnterNextMap(userId);
+                    break;
+                }
+            }
+        }
     }
 }

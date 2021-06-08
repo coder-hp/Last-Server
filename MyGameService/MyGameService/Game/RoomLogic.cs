@@ -18,6 +18,7 @@ namespace MyGameService.Game
         public int userId;
         public RoomUserState roomUserState = RoomUserState.Wait;
         public S2C_BroadcastState.BroadcastStateData cmd = null;
+        public bool isTouchTP = false;
 
         public RoomUserInfo(ClientInfo _clientInfo, int _userId)
         {
@@ -195,6 +196,36 @@ namespace MyGameService.Game
                     list_user.RemoveAt(i);
                     break;
                 }
+            }
+        }
+
+        public void heroEnterNextMap(int userId)
+        {
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                if (list_user[i].userId == userId)
+                {
+                    list_user[i].isTouchTP = true;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                if (!list_user[i].isTouchTP)
+                {
+                    return;
+                }
+            }
+
+            S2C_EnterNextMap s2c = new S2C_EnterNextMap();
+            s2c.Tag = CSParam.NetTag.EnterNextMap.ToString();
+            s2c.Code = (int)CSParam.CodeType.Ok;
+
+            for (int i = 0; i < list_user.Count; i++)
+            {
+                list_user[i].isTouchTP = false;
+                Socket_S.getInstance().Send(list_user[i].clientInfo, s2c);
             }
         }
 
