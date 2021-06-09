@@ -59,6 +59,7 @@
     <Compile Include="Game\RoomManager.cs" />
     <Compile Include="Net\DoTaskClientReq.cs" />
     <Compile Include="Net\DoTask_Bag.cs" />
+    <Compile Include="Net\DoTask_EnterNextMap.cs" />
     <Compile Include="Net\DoTask_GetUserState.cs" />
     <Compile Include="Net\DoTask_LeaveRoom.cs" />
     <Compile Include="Net\DoTask_UserReady.cs" />
