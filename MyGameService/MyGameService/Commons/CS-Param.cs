@@ -9,6 +9,7 @@ public class CSParam
         Login,
         Bag,
         EnterGameMode2,
+        ExitMatchGameMode2,
         CanEnterGameMode2,
         UserReady,
         GameMode2Start,
@@ -86,6 +87,11 @@ public class C2S_EnterGameMode2 : C2SBaseData
 
 public class S2C_EnterGameMode2 : S2CBaseData
 {
+}
+
+public class C2S_ExitMatchGameMode2 : C2SBaseData
+{
+    public int UserId = 0;
 }
 
 public class C2S_SubmitState : C2SBaseData
